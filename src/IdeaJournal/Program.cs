@@ -10,4 +10,16 @@ builder.Services.AddSingleton(repository);
 
 var app = builder.Build();
 
+app.UseDefaultFiles();   // / → index.html
+app.UseStaticFiles();    // раздаёт wwwroot/
+
+app.MapGet("/api/ideas", (IdeaRepository repo) => repo.GetAll());
+
+app.MapPost("/api/ideas", (NewIdea body, IdeaRepository repo) =>
+    string.IsNullOrWhiteSpace(body.Title)
+        ? Results.BadRequest("Идея не может быть пустой")
+        : Results.Created("/api/ideas", repo.Add(body.Title.Trim())));
+
 app.Run();
+
+record NewIdea(string Title);
