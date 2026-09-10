@@ -32,3 +32,19 @@ dotnet run --project src/IdeaJournal --urls http://localhost:5000
 ```
 
 Открыть http://localhost:5000
+
+## Git workflow
+
+| Ветка | Зачем |
+|-------|-------|
+| `feature/db` | модель `Idea` и хранилище SQLite |
+| `feature/ui` | страница: поле ввода и список идей |
+| `feature/actions` | кнопки «Реализовано» / «Отклонить» и их API |
+| `docs/readme` | инструкция запуска |
+
+Все ветки слиты в `main` через `merge --no-ff`.
+Конфликт при слиянии `docs/readme` описан в [git-conflict.md](git-conflict.md).
+
+## Граф веток
+
+Живой граф: https://github.com/fdsre-9805/idea-tracker/network
