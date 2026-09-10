@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Журнал идей</title>
+  <style>
+    body { font-family: sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+    form { display: flex; gap: 8px; margin-bottom: 24px; }
+    input { flex: 1; padding: 8px; font-size: 16px; }
+    button { padding: 6px 12px; cursor: pointer; }
+    li { margin: 10px 0; }
+    li.closed { color: #888; }
+    li button { margin-left: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Журнал идей</h1>
+
+  <form id="form">
+    <input id="title" placeholder="Новая идея..." required>
+    <button type="submit">Добавить</button>
+  </form>
+
+  <ul id="list"></ul>
+
+  <script>
+    const list = document.getElementById('list');
+    const input = document.getElementById('title');
+
+    async function load() {
+      const ideas = await (await fetch('/api/ideas')).json();
+      list.innerHTML = '';
+      for (const idea of ideas) {
+        const li = document.createElement('li');
+        li.textContent = idea.title;
+        if (idea.status !== 'New') {
+          li.className = 'closed';
+          li.append(idea.status === 'Implemented' ? ' — реализовано' : ' — отклонено');
+        }
+        list.append(li);
+      }
+    }
+
+    document.getElementById('form').onsubmit = async (e) => {
+      e.preventDefault();
+      await fetch('/api/ideas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: input.value })
+      });
+      input.value = '';
+      load();
+    };
+
+    load();
+  </script>
+</body>
+</html>
