@@ -33,12 +33,27 @@
       for (const idea of ideas) {
         const li = document.createElement('li');
         li.textContent = idea.title;
-        if (idea.status !== 'New') {
+        if (idea.status === 'New') {
+          li.append(
+            actionButton('Реализовано', `/api/ideas/${idea.id}/implement`),
+            actionButton('Отклонить', `/api/ideas/${idea.id}/reject`)
+          );
+        } else {
           li.className = 'closed';
           li.append(idea.status === 'Implemented' ? ' — реализовано' : ' — отклонено');
         }
         list.append(li);
       }
+    }
+
+    function actionButton(text, url) {
+      const button = document.createElement('button');
+      button.textContent = text;
+      button.onclick = async () => {
+        await fetch(url, { method: 'POST' });
+        load();
+      };
+      return button;
     }
 
     document.getElementById('form').onsubmit = async (e) => {

@@ -20,6 +20,12 @@ app.MapPost("/api/ideas", (NewIdea body, IdeaRepository repo) =>
         ? Results.BadRequest("Идея не может быть пустой")
         : Results.Created("/api/ideas", repo.Add(body.Title.Trim())));
 
+app.MapPost("/api/ideas/{id:long}/implement", (long id, IdeaRepository repo) =>
+    repo.SetStatus(id, "Implemented") ? Results.NoContent() : Results.Conflict());
+
+app.MapPost("/api/ideas/{id:long}/reject", (long id, IdeaRepository repo) =>
+    repo.SetStatus(id, "Rejected") ? Results.NoContent() : Results.Conflict());
+
 app.Run();
 
 record NewIdea(string Title);
