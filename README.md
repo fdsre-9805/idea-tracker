@@ -6,7 +6,7 @@
 её можно отметить как **реализованную** или **отклонить**. Отклонённые идеи не удаляются —
 журнал хранит всю историю.
 
-**Статус:** в разработке
+**Статус:** документация готова, код в разработке
 
 ## Стек
 
@@ -20,3 +20,15 @@
 - `project-notes.md` — заметки по проекту
 - `api-plan.md` — описание API
 - `src/IdeaJournal/` — код приложения
+
+## Запуск
+
+Нужен .NET SDK 10.
+
+```bash
+git clone https://github.com/fdsre-9805/idea-tracker.git
+cd idea-tracker
+dotnet run --project src/IdeaJournal --urls http://localhost:5000
+```
+
+Открыть http://localhost:5000
