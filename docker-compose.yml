@@ -1,0 +1,40 @@
+# Журнал идей: API + PostgreSQL одной командой — docker compose up -d
+services:
+  api:
+    build: ./src/IdeaJournal            # образ API собирается из нашего Dockerfile
+    container_name: idea-journal-api
+    ports:
+      - "8080:8080"                     # порт_хоста:порт_контейнера
+    environment:
+      # Host=db — имя сервиса базы в сети Compose, а не localhost
+      - CONNECTION_STRING=Host=db;Port=5432;Database=app;Username=postgres;Password=1234
+    depends_on:
+      db:
+        condition: service_healthy      # ждать не просто запуска, а готовности PostgreSQL
+    networks:
+      - idea-net
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    container_name: idea-journal-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=app
+    volumes:
+      - db_data:/var/lib/postgresql/data  # данные базы живут в volume, а не в контейнере
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+    networks:
+      - idea-net
+    restart: unless-stopped
+
+networks:
+  idea-net:                             # общая сеть: api видит db по имени
+
+volumes:
+  db_data:                              # named volume — переживает docker compose down
