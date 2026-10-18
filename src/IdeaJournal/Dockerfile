@@ -11,9 +11,7 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 COPY --from=build /app/publish .
-# База SQLite — в отдельной папке, её можно вынести в volume
-RUN mkdir -p /app/data
-ENV DB_PATH=/app/data/ideas.db
+# Строку подключения к PostgreSQL передаёт docker-compose.yml (CONNECTION_STRING)
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "IdeaJournal.dll"]
